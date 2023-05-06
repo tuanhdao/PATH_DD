@@ -3,6 +3,7 @@ from pathlib import Path
 
 import yaml
 from psychopy import core, data, event, gui, visual
+import wx #added by Anh 5/6/2023 to resolve wx.App error
 
 try:
     from yaml import CLoader as Loader
@@ -24,6 +25,7 @@ def main():
         'Pre/Post': ['Pre', 'Post', 'Follow-up'],
         'Full-screen': True,
     }
+    app = wx.App(False) #added by Anh 5/6/2023 to resolve wx.App error
 
     dialog = gui.DlgFromDict(
         info_dialog,
