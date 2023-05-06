@@ -1,4 +1,4 @@
-# PATH_MID_DD
+# PATH Delay Discounting Deployment
 
 Repository to store updates made to the original PATH DD behavioral task created by Richard Liu. 
 
