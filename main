@@ -1,0 +1,96 @@
+# -*- coding: utf-8 -*-
+from pathlib import Path
+
+import yaml
+from psychopy import core, data, event, gui, visual
+
+try:
+    from yaml import CLoader as Loader
+except ImportError:
+    from yaml import Loader
+
+from src.drawer import Drawer
+from src.runner import Runner
+
+PATH_ROOT = Path(__file__).absolute().parent
+
+
+def main():
+    # Show an information dialog
+    info_dialog = {
+        'Subject ID': '0000',
+        # 'Practice trials': 5,
+        'Wave': ['Baseline', '6-month', '12-month'],
+        'Pre/Post': ['Pre', 'Post', 'Follow-up'],
+        'Full-screen': True,
+    }
+
+    dialog = gui.DlgFromDict(
+        info_dialog,
+        title='Subject information',
+        order=[
+            'Subject ID',
+            'Wave',
+            'Pre/Post',
+            # 'Practice trials',
+            'Full-screen',
+        ])
+
+    if not dialog.OK or info_dialog['Subject ID'] == '':
+        core.quit()
+
+    # Parse the information given from the dialog
+    info = dict()
+    info['subject'] = info_dialog['Subject ID']
+    # info['num_prac'] = info_dialog['Practice trials']
+    info['num_main'] = 20
+    info['wave'] = {
+        'Baseline': 'BL', '6-month': 'M6', '12-month': 'M12'
+    }[info_dialog['Wave']]
+    info['prepost'] = str(info_dialog['Pre/Post']).lower()
+    info['fullscreen'] = info_dialog['Full-screen']
+
+    filename = (
+        'sub-{subject}_task-ddt_wave-{wave}_cond-{prepost}_beh.csv'
+    ).format(**info)
+    file_out = gui.fileSaveDlg(initFilePath='', initFileName=filename)
+
+    if not file_out:
+        core.quit()
+
+    # Open a window
+    window = visual.Window(
+        size=[800, 600],
+        winType='pyglet',
+        units='height',
+        monitor='testMonitor',
+        color='#333333',
+        screen=0,
+        allowGUI=True,
+        fullscr=info['fullscreen'],
+    )
+
+    # Load instructions.yml
+    with open(PATH_ROOT / 'instructions.yml', 'r', encoding='utf-8') as f:
+        doc_inst = yaml.load(f, Loader=Loader)
+
+    # Initialize a drawer and a runner
+    drawer = Drawer(window)
+    runner = Runner(window, drawer, info, doc_inst, file_out)
+
+    runner.show_inst_intro()
+
+    runner.show_inst_before_practice()
+    # runner.run_block_practice()
+
+    runner.show_inst_before_main()
+    runner.run_block_main()
+
+    runner.show_inst_outro()
+
+    window.close()
+    core.quit()
+
+
+if __name__ == '__main__':
+    main()
