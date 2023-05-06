@@ -2,7 +2,7 @@
 
 Repository to store updates made to the original PATH DD behavioral task created by Richard Liu. 
 
-# Instructions - MUST FOLLOW ALL OF THE STEPS EVEN IF YOU ALREADY HAVE PSYCHOPY INSTALLED
+## Instructions - MUST FOLLOW ALL OF THE STEPS EVEN IF YOU ALREADY HAVE PSYCHOPY INSTALLED
 
 Be sure Anaconda and Python are installed. To check, go to the start menu and search for Anaconda Prompt (anaconda3). Open Anaconda Prompt and when the base line appears type python -- and hit enter. The version should be 3.7 or 3.7.##. 
 1. Unzip the files and save them in a folder on your local task computer, not the server. 
