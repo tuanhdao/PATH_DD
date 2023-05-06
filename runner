@@ -1,0 +1,215 @@
+# -*- coding: utf-8 -*-
+import random
+
+import pandas as pd
+from psychopy import core, visual, event
+
+try:
+    from yaml import CLoader as Loader
+except ImportError:
+    from yaml import Loader
+
+from .ado import Engine, TaskDD, ModelHyp
+from .functions import (
+    generate_grid_design, generate_grid_param, generate_grid_response
+)
+
+__all__ = ['Runner']
+
+KEYS_LEFT = ['f', 'left']
+KEYS_RIGHT = ['j', 'right']
+KEYS_LR = KEYS_LEFT + KEYS_RIGHT
+KEYS_PROCEED = ['space', 'return']
+
+
+
+
+class Runner:
+    def __init__(self, window, drawer, info, doc_inst, file_out):
+        self.window = window
+        self.drawer = drawer
+        self.doc_inst = doc_inst
+        self.info = info
+        self.file_out = file_out
+
+        self.timer = core.Clock()
+        self.data = pd.DataFrame(None, columns=[
+            'ID', 'wave', 'prepost', 'block', 'trial',
+            'r_ss', 'r_ll', 't_ss', 't_ll',
+            'is_left_ss', 'keypress', 'choice', 'response_time',
+            'mean_logk', 'mean_tau', 'sd_logk', 'sd_tau',
+            'time_fixation', 'time_stimuli', 'time_choice', 'time_reset',
+            'time_update', 'time_done',
+        ])
+
+        self.engine = Engine(
+            task=TaskDD(),
+            model=ModelHyp(),
+            grid_design=generate_grid_design(),
+            grid_param=generate_grid_param(),
+            grid_response=generate_grid_response(),
+        )
+
+    def wait_keys(self, keylist):
+        keys = event.waitKeys(keyList=keylist + ['escape'])
+        key = keys[0]
+
+        if key == 'escape':
+            self.window.close()
+            core.quit()
+
+        return key
+
+    def show_inst_intro(self):
+        self.drawer.draw_inst(self.doc_inst['intro'], pos=(0, 0))
+        self.window.flip()
+        _ = self.wait_keys(KEYS_PROCEED)
+
+    def show_inst_before_practice(self):
+        insts = self.doc_inst['before_practice']
+        chosen = None
+
+        for i in range(len(insts)):
+            proceed = False
+
+            while not proceed:
+                self.drawer.draw_inst(insts[i], pos=(0, 0.35),
+                                      align_left=True, anchor_top=True)
+                self.drawer.draw(50, 800, 0, 4, pos=(0, -0.15), chosen=chosen)
+                self.window.flip()
+                key = self.wait_keys(KEYS_PROCEED + KEYS_LR)
+
+                if key in KEYS_PROCEED:
+                    proceed = True
+                else:
+                    chosen = 'left' if key in KEYS_LEFT else 'right'
+
+    def show_inst_before_main(self):
+        insts = self.doc_inst['before_main']
+        for i, inst in enumerate(insts):
+            self.drawer.draw_inst(inst, pos=(0, 0))
+            self.window.flip()
+            _ = self.wait_keys(KEYS_PROCEED)
+
+    def show_inst_outro(self):
+        self.drawer.draw_inst(self.doc_inst['outro'], pos=(0, 0))
+        self.window.flip()
+        _ = self.wait_keys(KEYS_PROCEED)
+
+    def show_countdown(self):
+        text = visual.TextStim(self.window, "", pos=(0.0, 0.0), height=0.3)
+
+        text.text = '3'
+        text.draw()
+        self.window.flip()
+        core.wait(1)
+
+        text.text = '2'
+        text.draw()
+        self.window.flip()
+        core.wait(1)
+
+        text.text = '1'
+        text.draw()
+        self.window.flip()
+        core.wait(1)
+
+    def run_trial(self, design, block=None, trial=None, is_left_ss=False):
+        # Show a fixation cross for 1 second
+        self.drawer.draw_fixation()
+        self.window.flip()
+        time_fixation = self.timer.getTime()
+        core.wait(1)
+
+        # Show two options until the participant choose one
+        self.drawer.draw(design['r_ss'], design['r_ll'],
+                         design['t_ss'], design['t_ll'],
+                         is_left_ss=is_left_ss,
+                         pos=(0, 0))
+        self.window.flip()
+        time_stim = self.timer.getTime()
+        keypress = self.wait_keys(KEYS_LR)
+
+        # Show the chosen option for 1 second
+        is_resp_left = keypress in KEYS_LEFT
+        choice = (
+            (is_resp_left and not is_left_ss) or
+            (not is_resp_left and is_left_ss)
+        )  # 0 for SS option and 1 for LL option
+        self.drawer.draw(design['r_ss'], design['r_ll'],
+                         design['t_ss'], design['t_ll'],
+                         is_left_ss=is_left_ss,
+                         chosen='left' if is_resp_left else 'right',
+                         pos=(0, 0))
+        self.window.flip()
+        time_choice = self.timer.getTime()
+        core.wait(1)
+
+        # Show a empty screen up to 0.5 second while updating the ADO engine
+        self.window.flip()
+        time_reset = self.timer.getTime()
+
+        self.engine.update(design, {'choice': choice})
+        post_mean = self.engine.post_mean
+        post_sd = self.engine.post_sd
+
+        time_updated = self.timer.getTime()
+        delta_update = time_updated - time_reset
+
+        if delta_update < 0.5:
+            core.wait(0.5 - delta_update)
+
+        time_done = self.timer.getTime()
+
+        return pd.Series({
+            'ID': self.info['subject'],
+            'wave': self.info['wave'],
+            'prepost': self.info['prepost'],
+            'block': block,
+            'trial': trial,
+            'r_ss': design['r_ss'],
+            'r_ll': design['r_ll'],
+            't_ss': design['t_ss'],
+            't_ll': design['t_ll'],
+            'is_left_ss': is_left_ss,
+            'keypress': keypress,
+            'choice': choice,
+            'response_time': time_choice - time_stim,
+            'mean_logk': post_mean[0],
+            'mean_tau': post_mean[1],
+            'sd_logk': post_sd[0],
+            'sd_tau': post_sd[1],
+            'time_fixation': time_fixation,
+            'time_stimuli': time_stim,
+            'time_choice': time_choice,
+            'time_reset': time_reset,
+            'time_updated': time_updated,
+            'time_done': time_done,
+        })
+
+    def run_block(self, block, design_type, num_trial):
+        self.engine.reset()
+
+        # is_left_ss = [i < int(num_trial) / 2 for i in range(num_trial)]
+        # random.shuffle(is_left_ss)
+        is_left_ss = [True] * num_trial  # SS option is fixed to left
+
+        self.show_countdown()
+        for i in range(num_trial):
+            design = self.engine.get_design(design_type)
+            result = self.run_trial(design, block, i + 1, is_left_ss[i])
+            self.data = self.data.append(result, ignore_index=True)
+
+            self.data.to_csv(self.file_out, index=False)
+
+    def run_block_practice(self, num_trial=None):
+        if num_trial is None:
+            num_trial = self.info['num_prac']
+
+        self.run_block('prac', 'random', num_trial)
+
+    def run_block_main(self, num_trial=None):
+        if num_trial is None:
+            num_trial = self.info['num_main']
+
+        self.run_block('main', 'optimal', num_trial)
