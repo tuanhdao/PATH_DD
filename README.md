@@ -2,7 +2,7 @@
 
 Repository to store updates made to the original PATH DD behavioral task created by Richard Liu. 
 
-** Instructions - MUST FOLLOW ALL OF THE STEPS EVEN IF YOU ALREADY HAVE PSYCHOPY INSTALLED
+# Instructions - MUST FOLLOW ALL OF THE STEPS EVEN IF YOU ALREADY HAVE PSYCHOPY INSTALLED
 
 Be sure Anaconda and Python are installed. To check, go to the start menu and search for Anaconda Prompt (anaconda3). Open Anaconda Prompt and when the base line appears type python -- and hit enter. The version should be 3.7 or 3.7.##. 
 1. Unzip the files and save them in a folder on your local task computer, not the server. 
@@ -36,5 +36,4 @@ Be sure Anaconda and Python are installed. To check, go to the start menu and se
 11.	Go to the dist folder and open the ddt.exe file to run the task 
 
 
-Note that to build the executable file, I  o usedthe Anaconda3 command prompt. Map the correct directory by typing cd (C:\\....) and then just type build.bat. This should run the batch file needed to build the executable file of the task.
-If that does not work, you can always run the task
+Note that I had to edit both the main.py file and runner.py file for the task to work on our computers. Additionally, to build the executable file, I needed to use the Anaconda3 command prompt and was not able to run the build.bat file by clicking on it. To do this, I mapped the correct directory by typing cd (C:\\....) and then just type build.bat. This should run the batch file needed to build the executable file of the task. If that does not work, you can always run the task using the command line. 
