@@ -15,19 +15,19 @@ Be sure Anaconda and Python are installed. To check, go to the start menu and se
   - Type code pip install pyinstaller and hit enter
   - Type code pip install poetry and hit enter
   - Type code cd followed by the file path to the DDT files and hit enter [E.g., cd C:\MABL\DDT (Delay Discounting Task) – ADO]
-  - Type code poetry install
-  - Type code code poetry shell
-  - Type code pip install pyyaml
-5. Type code pyinstaller main.py 
+  - Type code poetry install  and hit enter
+  - Type code code poetry shell  and hit enter
+  - Type code pip install pyyaml  and hit enter #I added this step because of an error of missing yaml package
+5. Type code pyinstaller main.py  and hit enter
  - This will create a “dist” folder with a “main” subfolder
 6. Run the task using the cmd line to make sure it works well
-  - Enter code python main.py
+  - Type code code python main.py and hit enter
   - A problem I encountered was that wx.App was missing. I edited the main.py file to import wx and then declared app = wx.App(False) after info_dialog
   - When the window opens enter the ID and select the Wave and Prepost, click okay and then Save
   - Run the task to check it is working
   - Another problem I ran into is that the task would crash after the first real trial because it attempted to append the results to a data frame. I edited the runner.py file to use the pd.concat method instead
 7. Open anaconda3 command prompt again and map the directory of where the task is stored on your computer (steps 3 and 4)
-8. Run the batch file that will create an executable file of the task by typing code build.bat and let it run in its entirety. 
+8. Run the batch file that will create an executable file of the task by typing code build.bat and let it run in its entirety 
 9.	If a Windows protected your PC pops up, click “more info” and then click “run anyway”
 9.	This will create a ddt.exe file and a ddt subfolder in the dist folder. The ddt subfolder will also contain a ddt.exe file
 10.	When you see (base) C:\..., go to DDT (Delay Discounting Task) – ADO > dist > ddt folder and go to the ddt.exe file. Double click to open
