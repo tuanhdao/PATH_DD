@@ -198,7 +198,7 @@ class Runner:
         for i in range(num_trial):
             design = self.engine.get_design(design_type)
             result = self.run_trial(design, block, i + 1, is_left_ss[i])
-            self.data = self.data.append(result, ignore_index=True)
+            self.data = pd.concat([self.data, pd.DataFrame([result])], ignore_index=True) #replaced append method to be pd.concat because append is now not supported in pandas 2.0
 
             self.data.to_csv(self.file_out, index=False)
 
