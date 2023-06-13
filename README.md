@@ -16,7 +16,7 @@ Be sure Anaconda and Python are installed. To check, go to the start menu and se
   - Type code pip install poetry and hit enter
   - Type code cd followed by the file path to the DDT files and hit enter [E.g., cd C:\MABL\DDT (Delay Discounting Task) – ADO]
   - Type code poetry install  and hit enter
-  - Type code code poetry shell  and hit enter
+  - Type code poetry shell  and hit enter
   - Type code pip install pyyaml  and hit enter #I added this step because of an error of missing yaml package
 5. Type code pyinstaller main.py  and hit enter
  - This will create a “dist” folder with a “main” subfolder
