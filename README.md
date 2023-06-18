@@ -20,8 +20,8 @@ Note that I used the Anaconda command line for installing the task on a desktop 
 6. In the new working directory, copy and paste each of the snippets below and hit enter to run (wait for each to finish running before adding the next one). 
   - poetry install
   - poetry shell
-  - pip install adopy
 (I added these code snippets to be pasted as additional steps because of an error of missing packages. I assume it's because I used the system cd line, and we are working with a virtual environment. 
+  - pip install adopy
   - pip install pyyaml
   - pip install psychopy
   - pip install pyinstaller)
