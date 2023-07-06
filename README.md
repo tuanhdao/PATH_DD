@@ -1,6 +1,6 @@
 # PATH Delay Discounting Deployment
 
-Repository to store updates made to the original PATH DD behavioral task created by Richard Liu. 
+Repository to store updates made to the original PATH DD behavioral task shared by Richard Liu. 
 
 ## Instructions - MUST FOLLOW ALL OF THE STEPS EVEN IF YOU ALREADY HAVE PSYCHOPY INSTALLED
 
