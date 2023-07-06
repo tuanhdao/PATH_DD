@@ -4,8 +4,8 @@ Repository to store updates made to the original PATH DD behavioral task shared 
 
 ## Instructions - MUST FOLLOW ALL OF THE STEPS EVEN IF YOU ALREADY HAVE PSYCHOPY INSTALLED
 
-Be sure Anaconda and Python are installed. To check, go to the start menu and search for Anaconda Prompt (anaconda3). Open Anaconda Prompt and when the base line appears type python -- and hit enter. The version should be 3.7 or 3.7.##. 
-Note that I used the Anaconda command line for installing the task on a desktop computer, but could only get the task to work using the system command prompt + creating a virtual environment. 
+Be sure Anaconda and Python are installed. To check, go to the start menu and search for Anaconda Prompt (anaconda3). Open Anaconda Prompt and "type python --" and hit enter. The version should be 3.7 or 3.7.##. 
+Note that I used the Anaconda command line for installing the task on a desktop computer, but could only get the task to work on a laptop using the system command prompt + creating a virtual environment. 
 1. Unzip the files and save them in a folder on your local task computer, not the server. 
 2. Open the Delay Discounting Task (DDT) folder on your local task computer. 
 3. Go to the start menu and open the command prompt as an administrator. 
@@ -15,7 +15,7 @@ Note that I used the Anaconda command line for installing the task on a desktop 
   - pip install psychopy
   - pip install pyinstaller
   - pip install poetry
-5. Set the working directory to be the folder where you saved the task. 
+5. Set the working directory to the folder where you saved the task. 
   - Type code cd followed by the file path to the DDT files and hit enter [E.g., cd C:\MABL\DDT (Delay Discounting Task) – ADO]
 6. In the new working directory, copy and paste each of the snippets below and hit enter to run (wait for each to finish running before adding the next one). 
   - poetry install
@@ -31,7 +31,7 @@ Note that I used the Anaconda command line for installing the task on a desktop 
   - python main.py and hit enter
   - When the window opens enter the ID and select the Wave and Prepost, click okay and then Save
   - Run the task to check it is working
-7. Solve issues that arise when runnint the task using the cd line. 
+7. Solve issues that arise when running the task using the cd line. 
   - A problem I encountered was that wx.App was missing. I edited the main.py file to import wx and then declared app = wx.App(False) after info_dialog. I did not run into the same issue when using a laptop. I recommend starting out with the original files and adjusting as needed.  
   - Another problem I ran into is that the task would crash after the first real trial because it attempted to append the results to a data frame. I edited the runner.py file to use the pd.concat method instead. 
 8. Make sure the task is able to run, then close the cd line and the task. 
